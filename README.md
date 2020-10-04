@@ -1,23 +1,25 @@
 # SinGAN
 
 [Project](https://tamarott.github.io/SinGAN.htm) | [Arxiv](https://arxiv.org/pdf/1905.01164.pdf) | [CVF](http://openaccess.thecvf.com/content_ICCV_2019/papers/Shaham_SinGAN_Learning_a_Generative_Model_From_a_Single_Natural_Image_ICCV_2019_paper.pdf) 
-### Official pytorch implementation of the paper: "SinGAN: Learning a Generative Model from a Single Natural Image", ICCV 2019 Best paper award (Marr prize)
+
+The original README is available [here](README_ORIGINAL.md).
+### ICCV 2019 Best paper award (Marr prize) 受賞論文 "SinGAN: Learning a Generative Model from a Single Natural Image" のPyTorch実装
 
 
-## Random samples from a *single* image
-With SinGAN, you can train a generative model from a single natural image, and then generate random samples form the given image, for example:
+## 単一画像からのランダム画像生成
+SinGANを用いることで、画像生成モデルを単一の画像で学習させることができ、その画像から新たな画像を生成することができる。例えば論文中の以下の画像を参照するとイメージがつく。
 
 ![](imgs/teaser.PNG)
 
 
-## SinGAN's applications
-SinGAN can be also use to a line of image manipulation task, for example:
+## SinGANの応用例
+SinGANは次のような一連の画像操作タスクにも使用することができる。
  ![](imgs/manipulation.PNG)
-This is done by injecting an image to the already trained model. See section 4 in our [paper](https://arxiv.org/pdf/1905.01164.pdf) for more details.
+これは、学習済みモデルに画像を入力することによって行われます。
+詳細は、[元論文](https://arxiv.org/pdf/1905.01164.pdf) の第4章を参照のこと。
 
-
-### Citation
-If you use this code for your research, please cite our paper:
+### 引用
+研究でこのコードを使う際には元論文を引用すること。
 
 ```
 @inproceedings{rottshaham2019singan,
@@ -28,117 +30,61 @@ If you use this code for your research, please cite our paper:
 }
 ```
 
-## Code
+## コード
 
-### Install dependencies
+### 依存パッケージ
 
 ```
 python -m pip install -r requirements.txt
 ```
 
-This code was tested with python 3.6  
+本コードは、Python 3.6 で動作を確認している。
 
 ###  Train
-To train SinGAN model on your own image, put the desire training image under Input/Images, and run
+SinGANモデルを任意の画像で学習させるには、Input/Images配下に画像を配置した上で下記コードを実行する。
 
 ```
 python main_train.py --input_name <input_file_name>
 ```
 
-This will also use the resulting trained model to generate random samples starting from the coarsest scale (n=0).
+CPU上で本コードを実行する際には、`--not_cuda` オプションを付与する。
 
-To run this code on a cpu machine, specify `--not_cuda` when calling `main_train.py`
-
-###  Random samples
-To generate random samples from any starting generation scale, please first train SinGAN model for the desire image (as described above), then run 
+###  ランダム画像生成
+ランダム画像生成を行うためには、まず上述のように任意の画像によってSinGANモデルを学習させる。その後、以下のコードを実行する。
 
 ```
 python random_samples.py --input_name <training_image_file_name> --mode random_samples --gen_start_scale <generation start scale number>
 ```
 
-pay attention: for using the full model, specify the generation start scale to be 0, to start the generation from the second scale, specify it to be 1, and so on. 
+注記：フルモデルを使用したい場合には、開始スケールが '0' になるよう指定する。同様に、第2スケールから生成を行いたい場合は '1' になるよう指定する。
 
-###  Random samples of arbitrery sizes
-To generate random samples of arbitrery sizes, please first train SinGAN model for the desire image (as described above), then run 
+###  任意サイズのランダム画像生成
+使用方法は通常のランダム画像生成と同様。
 
 ```
 python random_samples.py --input_name <training_image_file_name> --mode random_samples_arbitrary_sizes --scale_h <horizontal scaling factor> --scale_v <vertical scaling factor>
 ```
 
-###  Animation from a single image
+###  調和
 
-To generate short animation from a single image, run
-
-```
-python animation.py --input_name <input_file_name> 
-```
-
-This will automatically start a new training phase with noise padding mode.
-
-###  Harmonization
-
-To harmonize a pasted object into an image (See example in Fig. 13 in [our paper](https://arxiv.org/pdf/1905.01164.pdf)), please first train SinGAN model for the desire background image (as described above), then save the naively pasted reference image and it's binary mask under "Input/Harmonization" (see saved images for an example). Run the command
+入力画像中にペーストされた対象物を画像に "調和" ([元論文](https://arxiv.org/pdf/1905.01164.pdf) Fig. 13 参照) させたい場合には、まず上述の学習を実施し、その後単に対象物を学習画像中にペーストした画像とそのマスク画像を "Input/Harmonization" 以下に配置（保存されている画像を見てみるとイメージが掴める）し、以下のコードを実行する。
 
 ```
 python harmonization.py --input_name <training_image_file_name> --ref_name <naively_pasted_reference_image_file_name> --harmonization_start_scale <scale to inject>
 
 ```
 
-Please note that different injection scale will produce different harmonization effects. The coarsest injection scale equals 1. 
+注記：異なるスケールを用いて "調和" させると、それぞれで異なった調和効果が得られる。指定できる中で最も粗いスケールは '1' である。
 
-###  Editing
+###  画像編集
 
-To edit an image, (See example in Fig. 12 in [our paper](https://arxiv.org/pdf/1905.01164.pdf)), please first train SinGAN model on the desire non-edited image (as described above), then save the naive edit as a reference image under "Input/Editing" with a corresponding binary map (see saved images for an example). Run the command
+画像を "編集" ([元論文](https://arxiv.org/pdf/1905.01164.pdf) Fig. 12 参照) するには、まず編集されていない画像を用いて上述の学習を実施し、その後単純な編集を施した画像とそのマスク画像を "Input/Editing" 以下に配置（保存されている画像を見てみるとイメージが掴める）し、以下のコードを実行する。
 
 ```
 python editing.py --input_name <training_image_file_name> --ref_name <edited_image_file_name> --editing_start_scale <scale to inject>
 
 ```
-both the masked and unmasked output will be saved.
-Here as well, different injection scale will produce different editing effects. The coarsest injection scale equals 1. 
+実行結果として、マスク出力、アンマスク出力の双方が保存される。
 
-###  Paint to Image
-
-To transfer a paint into a realistic image (See example in Fig. 11 in [our paper](https://arxiv.org/pdf/1905.01164.pdf)), please first train SinGAN model on the desire image (as described above), then save your paint under "Input/Paint", and run the command
-
-```
-python paint2image.py --input_name <training_image_file_name> --ref_name <paint_image_file_name> --paint_start_scale <scale to inject>
-
-```
-Here as well, different injection scale will produce different editing effects. The coarsest injection scale equals 1. 
-
-Advanced option: Specify quantization_flag to be True, to re-train *only* the injection level of the model, to get a on a color-quantized version of upsamled generated images from previous scale. For some images, this might lead to more realistic results.
-
-### Super Resolution
-To super resolve an image, please run:
-```
-python SR.py --input_name <LR_image_file_name>
-```
-This will automatically train a SinGAN model correspond to 4x upsampling factor (if not exist already).
-For different SR factors, please specify it using the parametr `--sr_factor` when calling the function.
-SinGAN's results on BSD100 dataset can be download from the 'Downloads' folder.
-
-## Additional Data and Functions
-
-### Single Image Fréchet Inception Distance (SIFID score)
-To calculate the SIFID between real images and their corresponding fake samples, please run:
-```
-python SIFID/sifid_score.py --path2real <real images path> --path2fake <fake images path> 
-```  
-Make sure that each of the fake images file name is identical to its cooresponding real image file name. Images should be saved in `.jpg` format.
-
-### Super Resolution Results
-SinGAN's SR results on BSD100 dataset can be download from the 'Downloads' folder.
-
-### User Study
-The data used for the user study can be found in the Downloads folder. 
-
-real folder: 50 real images, randomly picked from the [places databas](http://places.csail.mit.edu/)
-
-fake_high_variance folder: random samples starting from n=N for each of the real images 
-
-fake_mid_variance folder: random samples starting from n=N-1 for each of the real images 
-
-For additional details please see section 3.1 in our [paper](https://arxiv.org/pdf/1905.01164.pdf)
-
+注記：異なるスケールを用いて "編集" すると、それぞれで異なった編集効果が得られる。指定できる中で最も粗いスケールは '1' である。
 
