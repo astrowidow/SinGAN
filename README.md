@@ -38,7 +38,11 @@ SinGANは次のような一連の画像操作タスクにも使用すること�
 python -m pip install -r requirements.txt
 ```
 
-本コードは、Python 3.6 で動作を確認している。
+本コードは、以下の環境で動作を確認している。
+* Python 3.6
+* PyTorch 1.6.0
+* torchvision 0.7.0
+* CUDA Toolkit 10.1
 
 ###  学習
 SinGANモデルを任意の画像で学習させるには、Input/Images配下に画像を配置した上で下記コードを実行する。
