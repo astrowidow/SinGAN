@@ -40,7 +40,7 @@ python -m pip install -r requirements.txt
 
 本コードは、Python 3.6 で動作を確認している。
 
-###  Train
+###  学習
 SinGANモデルを任意の画像で学習させるには、Input/Images配下に画像を配置した上で下記コードを実行する。
 
 ```
